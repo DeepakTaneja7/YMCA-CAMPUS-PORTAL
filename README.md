@@ -14,8 +14,4 @@ A full-stack web application designed to streamline campus maintenance and issue
 * **Database:** MySQL
 * **Security:** bcrypt (password hashing), CORS, dotenv (environment variable management)
 
-## 🚀 How to Run Locally
 
-1. **Clone the repository:**
-   ```bash
-   git clone [https://github.com/DeepakTaneja7/YMCA-CAMPUS-PORTAL.git](https://github.com/DeepakTaneja7/YMCA-CAMPUS-PORTAL.git)
