@@ -62,76 +62,56 @@ function initStudentSignup() {
     });
   }
 
-  form.addEventListener("submit", (e) => {
+  form.addEventListener('submit', async (e) => { // Added 'async' here
     e.preventDefault();
-    hideAlert("signupAlert");
+    hideAlert('signupAlert');
 
-    const name = form.fullName.value.trim();
-    const enrollment = form.enrollment.value.trim();
-    const email = form.email.value.trim().toLowerCase();
-    const dept = form.department.value;
-    const year = form.year.value;
-    const phone = form.phone.value.trim();
-    const password = form.password.value;
-    const confirm = form.confirmPassword.value;
+    const name        = form.fullName.value.trim();
+    const enrollment  = form.enrollment.value.trim();
+    const email       = form.email.value.trim().toLowerCase();
+    const dept        = form.department.value;
+    const year        = form.year.value;
+    const phone       = form.phone.value.trim();
+    const password    = form.password.value;
+    const confirm     = form.confirmPassword.value;
 
+    // --- FRONTEND VALIDATION ---
     if (!name || !enrollment || !email || !dept || !year || !password) {
-      return showError("signupAlert", "Please fill all required fields.");
+      return showError('signupAlert', 'Please fill all required fields.');
     }
-
-    // 1. Enforce exactly 11 digits for enrollment
-    if (!/^\d{11}$/.test(enrollment)) {
-      return showError(
-        "signupAlert",
-        "Enrollment number must be exactly 11 digits.",
-      );
-    }
-
-    // 2. Enforce official university email format matching the enrollment
-    const expectedEmail = `${enrollment}@jcboseust.ac.in`;
-    if (email !== expectedEmail) {
-      return showError(
-        "signupAlert",
-        `Please use your official university email: ${expectedEmail}`,
-      );
-    }
-
-    if (password.length < 6) {
-      return showError(
-        "signupAlert",
-        "Password must be at least 6 characters.",
-      );
-    }
-
     if (password !== confirm) {
-      return showError("signupAlert", "Passwords do not match.");
+      return showError('signupAlert', 'Passwords do not match.');
     }
 
-    if (studentExists(enrollment)) {
-      return showError(
-        "signupAlert",
-        "An account with this enrollment number already exists.",
-      );
+    // --- THE FIX: SEND TO BACKEND API ---
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName: name,
+          enrollment: enrollment,
+          email: email,
+          department: dept,
+          year: year,
+          phone: phone,
+          password: password
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        showSuccess('signupAlert', 'Account created successfully! Redirecting...');
+        setTimeout(() => { window.location.href = 'student-login.html'; }, 1500);
+      } else {
+        showError('signupAlert', data.message);
+      }
+
+    } catch (error) {
+      console.error("API Error:", error);
+      showError('signupAlert', 'Server connection failed. Is your backend running?');
     }
-
-    saveStudent({
-      name,
-      enrollment,
-      email,
-      dept,
-      year,
-      phone,
-      password,
-      createdAt: new Date().toISOString(),
-    });
-
-    showSuccess(
-      "signupAlert",
-      "Account created successfully! Redirecting to login…",
-    );
-    setTimeout(() => {
-      window.location.href = "student-login.html";
-    }, 1500);
   });
 }
 
@@ -140,33 +120,37 @@ function initStudentLogin() {
   const form = document.getElementById('studentLoginForm');
   if (!form) return;
 
-  form.addEventListener('submit', e => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     hideAlert('loginAlert');
 
-    // Make sure this says form.email.value, NOT form.enrollment.value
-    const email    = form.email.value.trim().toLowerCase();
-    const password = form.password.value;
+    const enrollment = form.enrollment.value.trim();
+    const password   = form.password.value;
 
-    if (!email || !password) {
-      return showError('loginAlert', 'Please enter your university email and password.');
+    if (!enrollment || !password) {
+      return showError('loginAlert', 'Please enter both fields.');
     }
 
-    // Enforce login format: 11 digits + @jcboseust.ac.in
-    if (!/^\d{11}@jcboseust\.ac\.in$/.test(email)) {
-      return showError('loginAlert', 'Please use your valid 11-digit university email.');
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ enrollment, password })
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Save the user data into the session (using the helper in constants.js)
+        setSession({ role: 'student', ...data.user });
+        window.location.href = 'student-dashboard.html';
+      } else {
+        showError('loginAlert', data.message);
+      }
+    } catch (error) {
+      console.error("Connection Error:", error);
+      showError('loginAlert', 'Could not connect to server.');
     }
-
-    // Extract the 11-digit enrollment number from the email to check the database
-    const enrollment = email.split('@')[0];
-
-    const student = findStudent(enrollment, password);
-    if (!student) {
-      return showError('loginAlert', 'Invalid email or password. Please try again or register.');
-    }
-
-    setSession({ role: 'student', enrollment: student.enrollment, name: student.name, dept: student.dept, year: student.year, email: student.email });
-    window.location.href = 'student-dashboard.html';
   });
 }
 

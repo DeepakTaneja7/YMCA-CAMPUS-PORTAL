@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   initTopbar(session);
   initSidebar();
-  loadStats(session);
   initComplaintForm(session);
   loadMyComplaints(session);
   initLogout();
@@ -43,19 +42,7 @@ function initSidebar() {
   if (items.length) items[0].click();
 }
 
-// ── STATS ─────────────────────────────────────────
-function loadStats(session) {
-  const list = getComplaintsByStudent(session.enrollment);
-  const total    = list.length;
-  const pending  = list.filter(c => c.status === 'Pending').length;
-  const progress = list.filter(c => c.status === 'In Progress').length;
-  const resolved = list.filter(c => c.status === 'Resolved').length;
 
-  setText('statTotal',    total);
-  setText('statPending',  pending);
-  setText('statProgress', progress);
-  setText('statResolved', resolved);
-}
 
 function setText(id, val) {
   const el = document.getElementById(id);
@@ -144,7 +131,8 @@ function removeImage(i) {
   renderPreviews();
 }
 
-function submitComplaint(session, form) {
+// ── UPGRADED DATABASE COMPLAINT SUBMISSION ──
+async function submitComplaint(session, form) {
   const alertEl = document.getElementById('formAlert');
   if (alertEl) alertEl.style.display = 'none';
 
@@ -165,74 +153,110 @@ function submitComplaint(session, form) {
     return;
   }
 
-  const complaint = {
-    title, department: dept, category, priority, block, room, description: desc,
-    photos: [...uploadedImages],
-    studentEnrollment: session.enrollment,
-    studentName: session.name,
-    studentDept: session.dept,
-    studentYear: session.year,
-  };
+  try {
+    const response = await fetch('http://localhost:5000/api/complaints', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        enrollment: session.enrollment,
+        title: title,
+        department: dept,
+        category: category,
+        priority: priority,
+        building: block,
+        room: room,
+        description: desc
+      })
+    });
 
-  const id = saveComplaint(complaint);
+    const data = await response.json();
 
-  if (alertEl) {
-    alertEl.className = 'alert alert-success';
-    alertEl.textContent = `✅ Complaint filed successfully! Your Complaint ID: ${id}`;
-    alertEl.style.display = 'block';
+    if (data.success) {
+      if (alertEl) {
+        alertEl.className = 'alert alert-success';
+        alertEl.textContent = `✅ Complaint filed successfully to the database!`;
+        alertEl.style.display = 'block';
+      }
+      
+      form.reset();
+      uploadedImages = [];
+      renderPreviews();
+
+      // Refresh stats & my complaints after a 1 second delay to ensure DB saved it
+      setTimeout(() => {
+          loadMyComplaints(session);
+      }, 500);
+
+    } else {
+      alert('Error: ' + data.message);
+    }
+  } catch (error) {
+    console.error('Error submitting complaint:', error);
+    alert('Could not connect to the database server.');
   }
-
-  form.reset();
-  uploadedImages = [];
-  renderPreviews();
-
-  // Refresh stats & my complaints
-  loadStats(session);
-  loadMyComplaints(session);
 }
 
-// ── MY COMPLAINTS LIST ────────────────────────────
-function loadMyComplaints(session) {
+// ── DATABASE: MY COMPLAINTS LIST ────────────────────────────
+async function loadMyComplaints(session) {
   const container = document.getElementById('myComplaintsList');
   if (!container) return;
 
-  const list = getComplaintsByStudent(session.enrollment);
+  try {
+    // Ask the backend for this specific student's complaints
+    const response = await fetch(`http://localhost:5000/api/complaints/student/${session.enrollment}`);
+    const data = await response.json();
 
-  if (!list.length) {
-    container.innerHTML = `
-      <div class="empty-state">
-        <div class="icon">📋</div>
-        <p>You haven't filed any complaints yet.</p>
-      </div>`;
-    return;
-  }
+    if (!data.success || !data.complaints.length) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <div class="icon">📋</div>
+          <p>You haven't filed any complaints yet.</p>
+        </div>`;
+      
+      // Update stats to zero
+      setText('statTotal', 0);
+      setText('statPending', 0);
+      setText('statProgress', 0);
+      setText('statResolved', 0);
+      return;
+    }
 
-  container.innerHTML = list.map(c => `
-    <div class="complaint-item">
-      <div class="complaint-item-top">
-        <div>
-          <div class="complaint-meta">
-            <span class="complaint-id">#${c.id}</span>
-            <span class="badge badge-${statusClass(c.status)}">${c.status}</span>
-            <span class="badge badge-${c.priority.toLowerCase()}">${c.priority}</span>
+    const list = data.complaints;
+
+    // Update the Stats at the top of the dashboard
+    setText('statTotal',    list.length);
+    setText('statPending',  list.filter(c => c.status === 'Pending').length);
+    setText('statProgress', list.filter(c => c.status === 'In Progress').length);
+    setText('statResolved', list.filter(c => c.status === 'Resolved').length);
+
+    // Build the HTML for the list
+    container.innerHTML = list.map(c => `
+      <div class="complaint-item">
+        <div class="complaint-item-top">
+          <div>
+            <div class="complaint-meta">
+              <span class="complaint-id">#${c.id}</span>
+              <span class="badge badge-${statusClass(c.status)}">${c.status}</span>
+              <span class="badge badge-${c.priority.toLowerCase()}">${c.priority}</span>
+            </div>
+            <div class="complaint-title" style="margin-top:6px">${escHtml(c.title)}</div>
           </div>
-          <div class="complaint-title" style="margin-top:6px">${escHtml(c.title)}</div>
+          <div style="font-size:0.78rem;color:var(--gray-400);white-space:nowrap">${formatDate(c.created_at)}</div>
         </div>
-        <div style="font-size:0.78rem;color:var(--gray-400);white-space:nowrap">${timeAgo(c.createdAt)}</div>
+        <div class="complaint-desc">${escHtml(c.description)}</div>
+        <div class="complaint-info-row">
+          <span class="info-chip"><span class="icon">🏛️</span>${escHtml(c.department)}</span>
+          <span class="info-chip"><span class="icon">🚪</span>Room: ${escHtml(c.room_no)}</span>
+          <span class="info-chip"><span class="icon">🔧</span>${escHtml(c.category)}</span>
+        </div>
+        ${c.remark ? `<div style="background:var(--gray-100);border-radius:8px;padding:10px 14px;font-size:0.84rem;color:var(--gray-600);margin-top:10px;"><strong>HOD Remark:</strong> ${escHtml(c.remark)}</div>` : ''}
       </div>
-      <div class="complaint-desc">${escHtml(c.description)}</div>
-      <div class="complaint-info-row">
-        <span class="info-chip"><span class="icon">🏛️</span>${escHtml(c.department)}</span>
-        <span class="info-chip"><span class="icon">🚪</span>Room: ${escHtml(c.room)}${c.block ? ' | Block: ' + escHtml(c.block) : ''}</span>
-        <span class="info-chip"><span class="icon">🔧</span>${escHtml(c.category)}</span>
-      </div>
-      ${c.remark ? `<div style="background:var(--gray-100);border-radius:8px;padding:10px 14px;font-size:0.84rem;color:var(--gray-600)"><strong>HOD Remark:</strong> ${escHtml(c.remark)}</div>` : ''}
-      ${c.photos && c.photos.length ? `
-        <div class="photo-gallery">
-          ${c.photos.map(src => `<img src="${src}" alt="photo" onclick="openPhoto('${src}')">`).join('')}
-        </div>` : ''}
-    </div>
-  `).join('');
+    `).join('');
+
+  } catch (error) {
+    console.error("Error loading complaints:", error);
+    container.innerHTML = `<p style="color:red; text-align:center;">Could not load complaints from database.</p>`;
+  }
 }
 
 // ── PHOTO LIGHTBOX ────────────────────────────────
