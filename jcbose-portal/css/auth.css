@@ -1,0 +1,267 @@
+/* auth.css – Login & Signup pages */
+
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  background: var(--off-white);
+  background-image:
+    radial-gradient(ellipse 60% 50% at 15% 20%, rgba(13,33,55,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 85% 80%, rgba(181,32,32,0.05) 0%, transparent 70%);
+}
+
+/* ── AUTH CARD ── */
+.auth-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 440px;
+  overflow: hidden;
+  border: 1px solid var(--gray-200);
+  animation: slideUp 0.4s ease both;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── CARD TOP BANNER ── */
+.auth-card-banner {
+  background: linear-gradient(135deg, var(--navy-dark) 0%, var(--navy-light) 100%);
+  padding: 28px 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-card-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 20px,
+    rgba(255,255,255,0.02) 20px,
+    rgba(255,255,255,0.02) 40px
+  );
+}
+
+.auth-card-banner .logo-wrap {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 14px;
+  background: white;
+  border-radius: 50%;
+  padding: 6px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+}
+
+.auth-card-banner .logo-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.auth-card-banner h2 {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  color: var(--white);
+  font-weight: 700;
+  margin-bottom: 4px;
+  position: relative;
+}
+
+.auth-card-banner .portal-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  position: relative;
+}
+
+.auth-card-banner .role-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  position: relative;
+}
+
+.role-chip-student { background: rgba(200,168,75,0.2); color: var(--gold); border: 1px solid rgba(200,168,75,0.4); }
+.role-chip-hod { background: rgba(181,32,32,0.2); color: #ff9999; border: 1px solid rgba(181,32,32,0.4); }
+
+/* ── CARD BODY ── */
+.auth-card-body {
+  padding: 28px 32px 32px;
+}
+
+.auth-card-body .auth-title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+
+.auth-card-body .auth-sub {
+  font-size: 0.85rem;
+  color: var(--gray-400);
+  margin-bottom: 24px;
+}
+
+/* ── SUBMIT BUTTON ── */
+.auth-submit {
+  width: 100%;
+  padding: 13px;
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  letter-spacing: 0.04em;
+  margin-top: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.auth-submit::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0);
+  transition: background var(--transition);
+}
+
+.auth-submit:hover::after { background: rgba(255,255,255,0.08); }
+.auth-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(13,33,55,0.3); }
+.auth-submit:active { transform: translateY(0); }
+
+/* ── SWITCH LINK ── */
+.auth-switch {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 0.87rem;
+  color: var(--gray-600);
+}
+
+.auth-switch a {
+  color: var(--red);
+  font-weight: 600;
+  transition: color var(--transition);
+}
+
+.auth-switch a:hover { color: var(--red-light); }
+
+/* ── PORTAL CHOICE ── (index page) ── */
+.portal-choice {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid var(--gray-100);
+}
+
+.portal-tab {
+  padding: 10px;
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--gray-400);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: var(--transition);
+}
+
+.portal-tab.active {
+  color: var(--navy);
+  border-bottom-color: var(--navy);
+}
+
+/* ── INLINE ICON FOR FIELDS ── */
+.input-icon-wrap {
+  position: relative;
+}
+
+.input-icon-wrap .form-control {
+  padding-left: 40px;
+}
+
+.input-icon-wrap .icon {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gray-400);
+  font-size: 1rem;
+  pointer-events: none;
+}
+
+.input-icon-wrap-textarea .form-control { padding-left: 40px; }
+.input-icon-wrap-textarea .icon { top: 14px; transform: none; }
+
+/* ── PASSWORD TOGGLE ── */
+.password-wrap { position: relative; }
+.password-wrap .form-control { padding-right: 44px; }
+.toggle-pwd {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--gray-400);
+  font-size: 1rem;
+  padding: 0;
+  line-height: 1;
+}
+.toggle-pwd:hover { color: var(--navy); }
+
+/* ── BACK LINK ── */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.84rem;
+  color: var(--gray-400);
+  margin-bottom: 20px;
+  cursor: pointer;
+  transition: color var(--transition);
+}
+.back-link:hover { color: var(--navy); }
+
+/* ── FORM GRID ── */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+@media (max-width: 520px) {
+  .auth-card-body { padding: 22px 20px 28px; }
+  .auth-card-banner { padding: 22px 20px; }
+  .form-row { grid-template-columns: 1fr; }
+}

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HOD Login – Campus Care Portal</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+</head>
+<body class="auth-page">
+
+<nav class="navbar">
+  <div class="navbar-inner">
+    <a href="index.html" class="navbar-brand">
+      <img src="assets/logo.png" alt="Logo" onerror="this.src='https://via.placeholder.com/48x48/0d2137/ffffff?text=JC'">
+      <div class="navbar-brand-text">
+        <span class="uni-name">J.C. Bose University, YMCA Faridabad</span>
+        <span class="portal-tag">Campus Care Portal</span>
+      </div>
+    </a>
+    <div class="navbar-links">
+      <a href="index.html" class="nav-btn nav-btn-outline">← Home</a>
+    </div>
+  </div>
+</nav>
+
+<main class="auth-main">
+  <div class="auth-card">
+    <!-- Banner -->
+    <div class="auth-card-banner" style="background: linear-gradient(135deg, #1a0505 0%, #4a0e0e 100%);">
+      <div class="logo-wrap">
+        <img src="assets/logo.png" alt="Logo" onerror="this.style.display='none'">
+      </div>
+      <h2>Campus Care Portal</h2>
+      <div class="portal-label">Department Head Access</div>
+      <div class="role-chip role-chip-hod">🏛️ HOD / Admin Login</div>
+    </div>
+
+    <!-- Body -->
+    <div class="auth-card-body">
+      <a class="back-link" href="index.html">← Back to Home</a>
+      <h3 class="auth-title">HOD Portal</h3>
+      <p class="auth-sub">Login with your registered department email</p>
+
+      <div id="hodLoginAlert" class="alert" style="display:none"></div>
+
+      <form id="hodLoginForm" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address *</label>
+          <div class="input-icon-wrap">
+            <span class="icon">✉️</span>
+            <input type="email" id="email" name="email" class="form-control"
+              placeholder="your.official@email.com" autocomplete="username" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password *</label>
+          <div class="password-wrap">
+            <input type="password" id="password" name="password" class="form-control"
+              placeholder="Enter your password" autocomplete="current-password" required />
+            <button type="button" class="toggle-pwd">👁️</button>
+          </div>
+        </div>
+
+        <button type="submit" class="auth-submit"
+          style="background: linear-gradient(135deg, #7b1010 0%, #b52020 100%);"
+          data-label="Login as HOD">Login as HOD
+        </button>
+      </form>
+
+      <div class="auth-switch">
+        New HOD account? <a href="hod-signup.html">Register here</a>
+      </div>
+
+      <div class="divider">or</div>
+
+      <div style="text-align:center">
+        <p style="font-size:0.82rem;color:var(--gray-400);margin-bottom:10px">Are you a student?</p>
+        <a href="student-login.html" class="btn btn-outline btn-sm" style="font-size:0.82rem">Student Login →</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  © 2024 <strong>J.C. Bose University of Science & Technology, YMCA Faridabad</strong>
+</footer>
+
+<script src="js/storage.js"></script>
+<script src="js/auth.js"></script>
+</body>
+</html>

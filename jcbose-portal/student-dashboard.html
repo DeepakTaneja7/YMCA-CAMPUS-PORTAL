@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Dashboard – Campus Care Portal</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body class="dashboard-page">
+
+<!-- TOP BAR -->
+<header class="dash-topbar">
+  <div class="dash-topbar-brand">
+    <img src="assets/logo.png" alt="Logo" onerror="this.src='https://via.placeholder.com/44x44/0d2137/ffffff?text=JC'">
+    <div>
+      <div class="uni-short">J.C. Bose University, YMCA</div>
+      <div class="portal-name">Student Dashboard</div>
+    </div>
+  </div>
+
+  <div class="dash-topbar-right">
+    <div class="user-pill">
+      <div class="avatar" id="userAvatar">S</div>
+      <div class="user-info">
+        <span class="user-name" id="userName">Student</span>
+        <span class="user-role" id="userRole">Department</span>
+      </div>
+    </div>
+    <button class="logout-btn" id="logoutBtn">🚪 Logout</button>
+  </div>
+</header>
+
+<!-- LAYOUT -->
+<div class="dash-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="dash-sidebar">
+    <div class="sidebar-section-label">Main</div>
+    <div class="sidebar-item active" data-section="file">
+      <span class="icon">📝</span> File Complaint
+    </div>
+    <div class="sidebar-item" data-section="mycomplaints">
+      <span class="icon">📋</span> My Complaints
+    </div>
+
+    <div class="sidebar-section-label">Info</div>
+    <div class="sidebar-item" data-section="help">
+      <span class="icon">❓</span> How to File
+    </div>
+    <div class="sidebar-item" data-section="contact">
+      <span class="icon">📞</span> Contact Admin
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="dash-main">
+
+    <!-- ── STATS ROW ── -->
+    <div class="stats-grid" style="margin-bottom:28px">
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-blue">📋</div>
+        <div class="stat-value" id="statTotal">0</div>
+        <div class="stat-label">Total Filed</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-yellow">⏳</div>
+        <div class="stat-value" id="statPending">0</div>
+        <div class="stat-label">Pending</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-blue">🔄</div>
+        <div class="stat-value" id="statProgress">0</div>
+        <div class="stat-label">In Progress</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-green">✅</div>
+        <div class="stat-value" id="statResolved">0</div>
+        <div class="stat-label">Resolved</div>
+      </div>
+    </div>
+
+    <!-- ── SECTION: FILE COMPLAINT ── -->
+    <div class="dash-section" id="sec-file">
+      <div class="section-title">File a New Complaint</div>
+      <p class="section-sub">Report any maintenance issue on campus with details and photos</p>
+
+      <div class="complaint-form-card">
+        <div class="complaint-form-header">
+          <div>
+            <div class="icon">🛠️</div>
+          </div>
+          <div>
+            <h3>Complaint Form</h3>
+            <p>Fill all required fields marked with *</p>
+          </div>
+        </div>
+
+        <div class="complaint-form-body">
+          <div id="formAlert" class="alert" style="display:none"></div>
+
+          <form id="complaintForm" novalidate>
+
+            <!-- Title -->
+            <div class="form-group">
+              <label class="form-label" for="title">Complaint Title *</label>
+              <input type="text" id="title" name="title" class="form-control"
+                placeholder="e.g. Fan not working in Lab 102" maxlength="100" required />
+            </div>
+
+            <!-- Department / Category / Priority -->
+            <div class="form-row-3">
+              <div class="form-group" style="margin-bottom:0">
+                <label class="form-label">Department *</label>
+                <select id="cat-dept" class="form-control" required>
+                  <option value="">Select dept.</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom:0">
+                <label class="form-label">Issue Category *</label>
+                <select id="cat-category" class="form-control" required>
+                  <option value="">Select category</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom:0">
+                <label class="form-label">Priority *</label>
+                <select id="cat-priority" class="form-control" required>
+                  <option value="">Select</option>
+                </select>
+              </div>
+            </div>
+            <div style="margin-bottom:18px"></div>
+
+            <!-- Block / Room -->
+            <div class="form-row-2">
+              <div class="form-group" style="margin-bottom:0">
+                <label class="form-label" for="block">Block / Building</label>
+                <input type="text" id="block" name="block" class="form-control"
+                  placeholder="e.g. Block A, Main Building" />
+              </div>
+              <div class="form-group" style="margin-bottom:0">
+                <label class="form-label" for="room">Room / Lab Number *</label>
+                <input type="text" id="room" name="room" class="form-control"
+                  placeholder="e.g. 201, CS Lab 3" required />
+              </div>
+            </div>
+            <div style="margin-bottom:18px"></div>
+
+            <!-- Description -->
+            <div class="form-group">
+              <label class="form-label" for="desc">Detailed Description *</label>
+              <textarea id="desc" name="desc" class="form-control" rows="4"
+                placeholder="Describe the issue clearly — since when it's happening, extent of damage, etc."
+                required maxlength="1000"></textarea>
+            </div>
+
+            <!-- Photo Upload -->
+            <div class="form-group">
+              <label class="form-label">Upload Photos (Max 5)</label>
+              <div class="photo-upload-zone" id="uploadZone">
+                <input type="file" id="photoInput" accept="image/*" multiple />
+                <div id="uploadHint">
+                  <div class="upload-icon">📸</div>
+                  <div class="upload-text">Click to upload or drag & drop photos</div>
+                  <div class="upload-hint">Supported: JPG, PNG, WEBP | Max 5 photos</div>
+                </div>
+                <div class="preview-grid" id="previewGrid"></div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:12px;align-items:center">
+              <button type="submit" class="btn btn-primary" style="padding:12px 32px;font-size:0.95rem">
+                📩 Submit Complaint
+              </button>
+              <button type="reset" class="btn btn-outline" onclick="uploadedImages=[];renderPreviews()">
+                Clear
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION: MY COMPLAINTS ── -->
+    <div class="dash-section" id="sec-mycomplaints" style="display:none">
+      <div class="section-title">My Complaints</div>
+      <p class="section-sub">Track status of all complaints filed by you</p>
+
+      <div class="complaints-list" id="myComplaintsList">
+        <div class="empty-state">
+          <div class="icon">📋</div>
+          <p>Loading complaints…</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION: HOW TO FILE ── -->
+    <div class="dash-section" id="sec-help" style="display:none">
+      <div class="section-title">How to File a Complaint</div>
+      <p class="section-sub">Follow these steps for a quick resolution</p>
+
+      <div class="card" style="padding:28px;max-width:640px">
+        <ol style="padding-left:20px;line-height:2;color:var(--gray-600)">
+          <li><strong>Click on "File Complaint"</strong> in the sidebar.</li>
+          <li>Enter a clear <strong>title</strong> describing the problem.</li>
+          <li>Select the <strong>Department</strong> responsible for the area.</li>
+          <li>Choose the <strong>issue category</strong> (e.g., Electrical, Plumbing).</li>
+          <li>Set the <strong>priority</strong> — High for urgent issues.</li>
+          <li>Enter the <strong>Block and Room number</strong> precisely.</li>
+          <li>Write a <strong>clear description</strong> of the problem.</li>
+          <li><strong>Upload photos</strong> of the issue (upto 5 images).</li>
+          <li>Click <strong>"Submit Complaint"</strong> — done! 🎉</li>
+        </ol>
+
+        <div class="alert alert-info" style="margin-top:20px">
+          📌 Your complaint will be visible to the HOD of the selected department. You can track the status under <strong>"My Complaints"</strong>.
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION: CONTACT ── -->
+    <div class="dash-section" id="sec-contact" style="display:none">
+      <div class="section-title">Contact Admin</div>
+      <p class="section-sub">For portal-related issues or urgent matters</p>
+
+      <div class="card" style="padding:28px;max-width:480px">
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="info-chip" style="font-size:0.92rem">
+            <span class="icon">🏫</span>
+            <span>J.C. Bose University of Science & Technology, YMCA</span>
+          </div>
+          <div class="info-chip" style="font-size:0.92rem">
+            <span class="icon">📍</span>
+            <span>NH-2, Sector 6, Mathura Road, Faridabad, Haryana – 121006</span>
+          </div>
+          <div class="info-chip" style="font-size:0.92rem">
+            <span class="icon">📞</span>
+            <span>+91-129-2310120</span>
+          </div>
+          <div class="info-chip" style="font-size:0.92rem">
+            <span class="icon">✉️</span>
+            <span>info@jcboseust.ac.in</span>
+          </div>
+          <div class="info-chip" style="font-size:0.92rem">
+            <span class="icon">🌐</span>
+            <span>www.jcboseust.ac.in</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- PHOTO LIGHTBOX MODAL -->
+<div class="modal-overlay" id="photoModal" onclick="if(event.target===this)closePhoto()">
+  <div class="modal-box" style="max-width:90vw;background:transparent;box-shadow:none">
+    <img id="modalPhoto" src="" alt="Complaint Photo" style="max-width:100%;max-height:85vh;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,0.5)">
+    <button onclick="closePhoto()" style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.6);color:white;border:none;border-radius:50%;width:36px;height:36px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+  </div>
+</div>
+
+<footer class="footer" style="margin-top:0">
+  © 2024 <strong>J.C. Bose University of Science & Technology, YMCA Faridabad</strong> · Campus Care Portal
+</footer>
+
+<script src="js/storage.js"></script>
+<script src="js/student.js"></script>
+</body>
+</html>

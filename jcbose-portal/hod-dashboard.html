@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HOD Dashboard – Campus Care Portal</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+</head>
+<body class="dashboard-page">
+
+<!-- TOP BAR -->
+<header class="dash-topbar">
+  <div class="dash-topbar-brand">
+    <img src="assets/logo.png" alt="Logo" onerror="this.src='https://via.placeholder.com/44x44/0d2137/ffffff?text=JC'">
+    <div>
+      <div class="uni-short">J.C. Bose University, YMCA</div>
+      <div class="portal-name">HOD Dashboard</div>
+    </div>
+  </div>
+
+  <div class="dash-topbar-right">
+    <div class="user-pill">
+      <div class="avatar" id="userAvatar" style="background:var(--red)">H</div>
+      <div class="user-info">
+        <span class="user-name" id="userName">HOD Name</span>
+        <span class="user-role" id="userRole">Head of Department</span>
+      </div>
+    </div>
+    <button class="logout-btn" id="logoutBtn">🚪 Logout</button>
+  </div>
+</header>
+
+<!-- LAYOUT -->
+<div class="dash-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="dash-sidebar">
+    <div style="padding:14px 20px;background:var(--red-pale);border-bottom:1px solid var(--gray-200);margin-bottom:8px">
+      <div style="font-size:0.72rem;font-weight:700;color:var(--gray-400);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:2px">Your Department</div>
+      <div id="hodDeptLabel" style="font-size:0.92rem;font-weight:700;color:var(--red);line-height:1.3">—</div>
+    </div>
+
+    <div class="sidebar-section-label">Complaints</div>
+    <div class="sidebar-item active" data-section="all">
+      <span class="icon">📋</span> All Complaints
+    </div>
+    <div class="sidebar-item" data-section="pending">
+      <span class="icon">⏳</span> Pending
+    </div>
+    <div class="sidebar-item" data-section="inprogress">
+      <span class="icon">🔄</span> In Progress
+    </div>
+    <div class="sidebar-item" data-section="resolved">
+      <span class="icon">✅</span> Resolved
+    </div>
+
+    <div class="sidebar-section-label">Info</div>
+    <div class="sidebar-item" data-section="guide">
+      <span class="icon">📖</span> HOD Guide
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="dash-main">
+
+    <!-- STATS -->
+    <div class="stats-grid" style="margin-bottom:28px">
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-blue">📋</div>
+        <div class="stat-value" id="statTotal">0</div>
+        <div class="stat-label">Total Received</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-yellow">⏳</div>
+        <div class="stat-value" id="statPending">0</div>
+        <div class="stat-label">Pending</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-blue">🔄</div>
+        <div class="stat-value" id="statProgress">0</div>
+        <div class="stat-label">In Progress</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-green">✅</div>
+        <div class="stat-value" id="statResolved">0</div>
+        <div class="stat-label">Resolved</div>
+      </div>
+    </div>
+
+    <!-- ── SECTION: ALL COMPLAINTS ── -->
+    <div class="dash-section" id="sec-all">
+      <div class="section-title">Department Complaints</div>
+      <p class="section-sub">All complaints raised for your department</p>
+
+      <!-- Filters -->
+      <div class="filters-bar">
+        <input type="text" id="searchInput" class="form-control search-input"
+          placeholder="🔍 Search by title, student, room…" />
+        <select id="filterStatus" class="form-control">
+          <option value="All">All Status</option>
+          <option>Pending</option>
+          <option>In Progress</option>
+          <option>Resolved</option>
+          <option>Rejected</option>
+        </select>
+        <select id="filterPriority" class="form-control">
+          <option value="All">All Priority</option>
+          <option>High</option>
+          <option>Medium</option>
+          <option>Low</option>
+        </select>
+      </div>
+
+      <div class="complaints-list" id="complaintsContainer">
+        <div class="empty-state">
+          <div class="icon">📭</div>
+          <p>Loading complaints…</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION: PENDING ── -->
+    <div class="dash-section" id="sec-pending" style="display:none">
+      <div class="section-title">Pending Complaints</div>
+      <p class="section-sub">Complaints awaiting action from your department</p>
+      <div class="complaints-list" id="pendingContainer">
+        <div class="empty-state"><div class="icon">⏳</div><p>No pending complaints.</p></div>
+      </div>
+    </div>
+
+    <!-- ── SECTION: IN PROGRESS ── -->
+    <div class="dash-section" id="sec-inprogress" style="display:none">
+      <div class="section-title">In Progress</div>
+      <p class="section-sub">Complaints currently being addressed</p>
+      <div class="complaints-list" id="progressContainer">
+        <div class="empty-state"><div class="icon">🔄</div><p>No in-progress complaints.</p></div>
+      </div>
+    </div>
+
+    <!-- ── SECTION: RESOLVED ── -->
+    <div class="dash-section" id="sec-resolved" style="display:none">
+      <div class="section-title">Resolved Complaints</div>
+      <p class="section-sub">Successfully resolved maintenance issues</p>
+      <div class="complaints-list" id="resolvedContainer">
+        <div class="empty-state"><div class="icon">✅</div><p>No resolved complaints yet.</p></div>
+      </div>
+    </div>
+
+    <!-- ── SECTION: HOD GUIDE ── -->
+    <div class="dash-section" id="sec-guide" style="display:none">
+      <div class="section-title">HOD Guide</div>
+      <p class="section-sub">How to manage complaints on this portal</p>
+
+      <div class="card" style="padding:28px;max-width:640px">
+        <h4 style="font-family:var(--font-heading);color:var(--navy);margin-bottom:14px">Managing Complaints</h4>
+        <ol style="padding-left:20px;line-height:2.2;color:var(--gray-600)">
+          <li>You only see complaints filed for <strong>your department</strong>.</li>
+          <li>Review each complaint — read description and check photos.</li>
+          <li>Use the <strong>"Update Status"</strong> dropdown to change status:
+            <ul style="margin-left:16px;list-style:disc">
+              <li><strong>Pending</strong> – Not yet acted upon</li>
+              <li><strong>In Progress</strong> – Work has been initiated</li>
+              <li><strong>Resolved</strong> – Issue has been fixed</li>
+              <li><strong>Rejected</strong> – Complaint is invalid</li>
+            </ul>
+          </li>
+          <li>Click <strong>"Add Remark"</strong> to provide a response or resolution note to the student.</li>
+          <li>Use filters to quickly find complaints by status or priority.</li>
+        </ol>
+
+        <div class="alert alert-info" style="margin-top:20px">
+          ℹ️ Students can see the status and your remarks in real time from their dashboard.
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- REMARK MODAL -->
+<div class="modal-overlay" id="remarkModal" onclick="if(event.target===this)closeRemarkModal()">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>✏️ Add / Update Remark</h3>
+      <button class="modal-close" onclick="closeRemarkModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:0.87rem;color:var(--gray-600);margin-bottom:12px">
+        Add a remark explaining the action taken, resolution, or reason for rejection. This will be visible to the student.
+      </p>
+      <div class="form-group" style="margin-bottom:0">
+        <label class="form-label" for="remarkInput">Remark *</label>
+        <textarea id="remarkInput" class="form-control" rows="5"
+          placeholder="e.g. Maintenance team has been informed and will visit on Monday…"
+          maxlength="500"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeRemarkModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveRemark()">💾 Save Remark</button>
+    </div>
+  </div>
+</div>
+
+<!-- PHOTO LIGHTBOX MODAL -->
+<div class="modal-overlay" id="photoModal" onclick="if(event.target===this)closePhoto()" style="background:rgba(0,0,0,0.85)">
+  <div style="position:relative;max-width:90vw">
+    <img id="modalPhoto" src="" alt="Complaint Photo"
+      style="max-width:100%;max-height:85vh;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,0.5);display:block">
+    <button onclick="closePhoto()"
+      style="position:absolute;top:-14px;right:-14px;background:var(--red);color:white;border:none;border-radius:50%;width:36px;height:36px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+  </div>
+</div>
+
+<footer class="footer" style="margin-top:0">
+  © 2024 <strong>J.C. Bose University of Science & Technology, YMCA Faridabad</strong> · Campus Care Portal
+</footer>
+
+<script src="js/storage.js"></script>
+<script src="js/hod.js"></script>
+
+<script>
+// Override sidebar for HOD to also filter by status
+document.addEventListener('DOMContentLoaded', () => {
+  const session = getSession();
+  if (!session) return;
+
+  // Wire up filtered sections
+  const pendingContainer  = document.getElementById('pendingContainer');
+  const progressContainer = document.getElementById('progressContainer');
+  const resolvedContainer = document.getElementById('resolvedContainer');
+
+  function renderFiltered(container, status) {
+    if (!container) return;
+    let list = getComplaintsByDept(session.dept).filter(c => c.status === status);
+    if (!list.length) {
+      const labels = { Pending: 'No pending complaints.', 'In Progress': 'No complaints in progress.', Resolved: 'No resolved complaints yet.' };
+      container.innerHTML = `<div class="empty-state"><div class="icon">📭</div><p>${labels[status]||'No complaints.'}</p></div>`;
+      return;
+    }
+    container.innerHTML = list.map(c => `
+      <div class="complaint-item">
+        <div class="complaint-item-top">
+          <div>
+            <div class="complaint-meta">
+              <span class="complaint-id">#${c.id}</span>
+              <span class="badge badge-${statusClass(c.status)}">${c.status}</span>
+              <span class="badge badge-${c.priority.toLowerCase()}">${c.priority}</span>
+            </div>
+            <div class="complaint-title" style="margin-top:6px">${escHtml(c.title)}</div>
+          </div>
+          <div style="font-size:0.78rem;color:var(--gray-400)">${timeAgo(c.createdAt)}</div>
+        </div>
+        <div class="complaint-desc">${escHtml(c.description)}</div>
+        <div class="complaint-info-row">
+          <span class="info-chip"><span class="icon">👤</span>${escHtml(c.studentName)} (${escHtml(c.studentEnrollment)})</span>
+          <span class="info-chip"><span class="icon">🚪</span>Room: ${escHtml(c.room)}</span>
+          <span class="info-chip"><span class="icon">🔧</span>${escHtml(c.category)}</span>
+        </div>
+        ${c.remark ? `<div style="background:var(--gray-100);border-radius:8px;padding:10px 14px;font-size:0.84rem;color:var(--gray-600)"><strong>Remark:</strong> ${escHtml(c.remark)}</div>` : ''}
+      </div>
+    `).join('');
+  }
+
+  // Re-render filtered views when those sections become visible
+  document.querySelectorAll('.sidebar-item[data-section]').forEach(item => {
+    item.addEventListener('click', () => {
+      const s = item.dataset.section;
+      if (s === 'pending')    renderFiltered(pendingContainer,  'Pending');
+      if (s === 'inprogress') renderFiltered(progressContainer, 'In Progress');
+      if (s === 'resolved')   renderFiltered(resolvedContainer, 'Resolved');
+    });
+  });
+
+  function statusClass(s) {
+    return { Pending:'pending', 'In Progress':'progress', Resolved:'resolved', Rejected:'rejected' }[s]||'pending';
+  }
+
+  function escHtml(str) {
+    return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+});
+</script>
+</body>
+</html>
