@@ -97,15 +97,14 @@ function populateSelect(id, options) {
 
 function handleFiles(files) {
   const allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+  
   files.forEach(file => {
     if (!allowed.includes(file.type)) return;
     if (uploadedImages.length >= 5) return;
-    const reader = new FileReader();
-    reader.onload = (ev) => {
-      uploadedImages.push(ev.target.result);
-      renderPreviews();
-    };
-    reader.readAsDataURL(file);
+    
+    // We now push the RAW FILE OBJECT
+    uploadedImages.push(file); 
+    renderPreviews();
   });
 }
 
@@ -113,15 +112,20 @@ function renderPreviews() {
   const grid = document.getElementById('previewGrid');
   if (!grid) return;
   grid.innerHTML = '';
-  uploadedImages.forEach((src, i) => {
+  
+  uploadedImages.forEach((file, i) => {
+    // Create a temporary URL to show the image on the screen before it uploads
+    const tempUrl = URL.createObjectURL(file); 
+    
     const div = document.createElement('div');
     div.className = 'preview-item';
     div.innerHTML = `
-      <img src="${src}" alt="Photo ${i+1}">
-      <button class="remove-btn" onclick="removeImage(${i})">✕</button>
+      <img src="${tempUrl}" alt="Photo ${i+1}">
+      <button type="button" class="remove-btn" onclick="removeImage(${i})">✕</button>
     `;
     grid.appendChild(div);
   });
+  
   const hint = document.getElementById('uploadHint');
   if (hint) hint.style.display = uploadedImages.length >= 5 ? 'none' : 'block';
 }
@@ -131,7 +135,7 @@ function removeImage(i) {
   renderPreviews();
 }
 
-// ── UPGRADED DATABASE COMPLAINT SUBMISSION ──
+// ── DATABASE COMPLAINT SUBMISSION ──
 async function submitComplaint(session, form) {
   const alertEl = document.getElementById('formAlert');
   if (alertEl) alertEl.style.display = 'none';
@@ -154,19 +158,26 @@ async function submitComplaint(session, form) {
   }
 
   try {
+    // 1. Create FormData instead of JSON
+    const formData = new FormData();
+    formData.append('enrollment', session.enrollment);
+    formData.append('title', title);
+    formData.append('department', dept);
+    formData.append('category', category);
+    formData.append('priority', priority);
+    formData.append('building', block);
+    formData.append('room', room);
+    formData.append('description', desc);
+
+    // 2. Append all the raw files to the 'photos' field
+    uploadedImages.forEach(file => {
+      formData.append('photos', file);
+    });
+
+    // 3. Send the request 
     const response = await fetch('http://localhost:5000/api/complaints', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        enrollment: session.enrollment,
-        title: title,
-        department: dept,
-        category: category,
-        priority: priority,
-        building: block,
-        room: room,
-        description: desc
-      })
+      body: formData // Note: No need to set Content-Type; browser does it automatically for FormData
     });
 
     const data = await response.json();
@@ -174,7 +185,7 @@ async function submitComplaint(session, form) {
     if (data.success) {
       if (alertEl) {
         alertEl.className = 'alert alert-success';
-        alertEl.textContent = `✅ Complaint filed successfully to the database!`;
+        alertEl.textContent = `✅ Complaint filed successfully with photos!`;
         alertEl.style.display = 'block';
       }
       
@@ -182,10 +193,7 @@ async function submitComplaint(session, form) {
       uploadedImages = [];
       renderPreviews();
 
-      // Refresh stats & my complaints after a 1 second delay to ensure DB saved it
-      setTimeout(() => {
-          loadMyComplaints(session);
-      }, 500);
+      setTimeout(() => { loadMyComplaints(session); }, 500);
 
     } else {
       alert('Error: ' + data.message);

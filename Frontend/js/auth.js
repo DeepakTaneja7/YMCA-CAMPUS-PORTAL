@@ -1,6 +1,5 @@
 // auth.js – Handles login & signup for Student and HOD
 
-// ── UTILS ────────────────────────────────────────
 function showError(elId, msg) {
   const el = document.getElementById(elId);
   if (!el) return;
@@ -48,21 +47,20 @@ function initStudentSignup() {
   const form = document.getElementById("studentSignupForm");
   if (!form) return;
 
-  // UX Bonus: Real-time number filtering & Auto-fill email
   const enrollmentInput = form.enrollment;
   const emailInput = form.email;
   if (enrollmentInput && emailInput) {
     enrollmentInput.addEventListener("input", function () {
-      this.value = this.value.replace(/[^0-9]/g, ""); // Strip non-numbers
+      this.value = this.value.replace(/[^0-9]/g, ""); 
       if (this.value.length === 11) {
-        emailInput.value = this.value + "@jcboseust.ac.in"; // Auto-fill email
+        emailInput.value = this.value + "@jcboseust.ac.in"; 
       } else {
         emailInput.value = "";
       }
     });
   }
 
-  form.addEventListener('submit', async (e) => { // Added 'async' here
+  form.addEventListener('submit', async (e) => { 
     e.preventDefault();
     hideAlert('signupAlert');
 
@@ -75,7 +73,6 @@ function initStudentSignup() {
     const password    = form.password.value;
     const confirm     = form.confirmPassword.value;
 
-    // --- FRONTEND VALIDATION ---
     if (!name || !enrollment || !email || !dept || !year || !password) {
       return showError('signupAlert', 'Please fill all required fields.');
     }
@@ -83,19 +80,19 @@ function initStudentSignup() {
       return showError('signupAlert', 'Passwords do not match.');
     }
 
-    // --- THE FIX: SEND TO BACKEND API ---
+    // --- NEW: STRICT PASSWORD VALIDATION ---
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return showError('signupAlert', 'Password must be 8+ characters with uppercase, lowercase, number, and special character.');
+    }
+    // ---------------------------------------
+
     try {
       const response = await fetch('http://localhost:5000/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          fullName: name,
-          enrollment: enrollment,
-          email: email,
-          department: dept,
-          year: year,
-          phone: phone,
-          password: password
+          fullName: name, enrollment, email, department: dept, year, phone, password
         })
       });
 
@@ -107,9 +104,7 @@ function initStudentSignup() {
       } else {
         showError('signupAlert', data.message);
       }
-
     } catch (error) {
-      console.error("API Error:", error);
       showError('signupAlert', 'Server connection failed. Is your backend running?');
     }
   });
@@ -159,7 +154,7 @@ function initHODSignup() {
   const form = document.getElementById("hodSignupForm");
   if (!form) return;
 
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     hideAlert("hodSignupAlert");
 
@@ -167,93 +162,80 @@ function initHODSignup() {
     const empId = form.empId.value.trim().toUpperCase();
     const email = form.email.value.trim().toLowerCase();
     const dept = form.department.value;
-    const phone = form.phone.value.trim();
+    const phone = form.phone.value.trim(); 
     const password = form.password.value;
     const confirm = form.confirmPassword.value;
     const code = form.secretCode.value.trim();
 
-    if (!name || !empId || !email || !dept || !password || !code) {
+    if (!name || !empId || !email || !dept || !phone || !password || !code) {
       return showError("hodSignupAlert", "Please fill all required fields.");
     }
-
-    // Simple secret code for HOD registration (in real app: admin approval)
     if (code !== "JCBOSE@HOD2024") {
-      return showError(
-        "hodSignupAlert",
-        "Invalid HOD registration code. Please contact admin.",
-      );
+      return showError("hodSignupAlert", "Invalid HOD registration code.");
     }
-
-    if (password.length < 6) {
-      return showError(
-        "hodSignupAlert",
-        "Password must be at least 6 characters.",
-      );
-    }
-
     if (password !== confirm) {
       return showError("hodSignupAlert", "Passwords do not match.");
     }
 
-    if (hodExists(email)) {
-      return showError(
-        "hodSignupAlert",
-        "An HOD account with this email already exists.",
-      );
+    // --- NEW: STRICT PASSWORD VALIDATION ---
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return showError("hodSignupAlert", "Password must be 8+ characters with uppercase, lowercase, number, and special character.");
     }
+    // ---------------------------------------
 
-    saveHOD({
-      name,
-      empId,
-      email,
-      dept,
-      phone,
-      password,
-      createdAt: new Date().toISOString(),
-    });
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/hod/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ empId, name, email, department: dept, phone, password })
+      });
 
-    showSuccess(
-      "hodSignupAlert",
-      "HOD account created successfully! Redirecting to login…",
-    );
-    setTimeout(() => {
-      window.location.href = "hod-login.html";
-    }, 1500);
+      const data = await response.json();
+
+      if (data.success) {
+        showSuccess("hodSignupAlert", "HOD Account created! Redirecting...");
+        setTimeout(() => { window.location.href = "hod-login.html"; }, 1500);
+      } else {
+        showError("hodSignupAlert", data.message);
+      }
+    } catch (error) {
+      showError("hodSignupAlert", "Server connection failed.");
+    }
   });
 }
 
 // ── HOD LOGIN ─────────────────────────────────────
-function initHODLogin() {
+async function initHODLogin() {
   const form = document.getElementById("hodLoginForm");
   if (!form) return;
 
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     hideAlert("hodLoginAlert");
 
     const email = form.email.value.trim().toLowerCase();
     const password = form.password.value;
 
-    if (!email || !password) {
-      return showError(
-        "hodLoginAlert",
-        "Please enter your email and password.",
-      );
-    }
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/hod/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
 
-    const hod = findHOD(email, password);
-    if (!hod) {
-      return showError("hodLoginAlert", "Invalid email or password.");
-    }
+      const data = await response.json();
 
-    setSession({
-      role: "hod",
-      email: hod.email,
-      name: hod.name,
-      dept: hod.dept,
-      empId: hod.empId,
-    });
-    window.location.href = "hod-dashboard.html";
+      if (data.success) {
+        // This uses your constants.js helper to save the session
+        setSession({ role: "hod", ...data.user });
+        window.location.href = "hod-dashboard.html";
+      } else {
+        showError("hodLoginAlert", data.message);
+      }
+    } catch (error) {
+      showError("hodLoginAlert", "Could not connect to server.");
+    }
   });
 }
 

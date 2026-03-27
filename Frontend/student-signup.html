@@ -167,7 +167,8 @@
                     id="password"
                     name="password"
                     class="form-control"
-                    placeholder="Min. 6 characters"
+                    placeholder="8+ chars (A, a, 1, #)"
+                    minlength="8"
                     required
                   />
                   <button type="button" class="toggle-pwd"></button>
@@ -184,12 +185,23 @@
                     name="confirmPassword"
                     class="form-control"
                     placeholder="Re-enter password"
+                    minlength="8"
                     required
                   />
                   <button type="button" class="toggle-pwd"></button>
                 </div>
               </div>
             </div>
+            <p
+              style="
+                font-size: 0.72rem;
+                color: var(--gray-400);
+                margin-top: 6px;
+              "
+            >
+              Must be 8+ characters with Uppercase, Lowercase, Number, and
+              Special Char.
+            </p>
             <div style="margin-bottom: 18px"></div>
 
             <button
