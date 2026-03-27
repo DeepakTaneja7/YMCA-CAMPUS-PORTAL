@@ -23,5 +23,5 @@ pool.getConnection((err, connection) => {
     }
 });
 
-// Export it so we can use it in other files (like our auth routes later)
+
 module.exports = pool.promise();
