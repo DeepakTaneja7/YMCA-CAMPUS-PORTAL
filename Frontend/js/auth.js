@@ -170,7 +170,7 @@ function initHODSignup() {
     if (!name || !empId || !email || !dept || !phone || !password || !code) {
       return showError("hodSignupAlert", "Please fill all required fields.");
     }
-    if (code !== "JCBOSE@HOD2024") {
+    if (code !== "JCBOSE@HOD2026") {
       return showError("hodSignupAlert", "Invalid HOD registration code.");
     }
     if (password !== confirm) {

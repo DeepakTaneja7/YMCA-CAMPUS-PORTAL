@@ -1,20 +1,20 @@
 // ── DEPARTMENTS LIST ──────────────────────────────
 const DEPARTMENTS = [
   'Computer Engineering',
-  'Information Technology',
   'Electronics & Communication',
   'Mechanical Engineering',
   'Civil Engineering',
   'Electrical Engineering',
-  'Applied Sciences',
-  'Management Studies',
+  'Bvoc',
   'MBA',
-  'MCA',
   'Administration',
   'Library',
   'Hostel',
-  'Sports Complex',
-  'Canteen',
+  'Cafeteria',
+  'CV Raman Block',
+  'Shakuntalam',
+  'Auditorium',
+  'Other',
 ];
 
 const ISSUE_CATEGORIES = [
@@ -57,7 +57,7 @@ function requireSession(role, redirectTo) {
   return s;
 }
 
-// ── DATE FORMATTING HELPERS (You will need these for the dashboard!) ──
+// ── DATE FORMATTING HELPERS  ──
 function formatDate(iso) {
   if (!iso) return '—';
   const d = new Date(iso);
