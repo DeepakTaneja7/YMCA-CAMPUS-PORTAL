@@ -9,7 +9,11 @@ const pool = mysql.createPool({
     database: process.env.DB_NAME,
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0
+    queueLimit: 0,
+    port: 12147, // Added your Aiven database port here
+    ssl: {
+        rejectUnauthorized: true // Added SSL requirement for Aiven
+    }
 });
 
 // Test the connection right away
