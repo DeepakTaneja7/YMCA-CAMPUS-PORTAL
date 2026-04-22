@@ -48,7 +48,7 @@ let allDeptComplaints = [];
 // ── FETCH COMPLAINTS FROM DATABASE ──
 async function loadComplaints(session) {
   try {
-    const response = await fetch(`http://localhost:5000/api/complaints/department/${session.dept}`);
+    const response = await fetch(`http://ymca-campus-portal.onrender.com/api/complaints/department/${session.dept}`);
     const data = await response.json();
     
     if (data.success) {
@@ -186,7 +186,7 @@ function renderComplaints(session) {
 // ── STATUS & REMARK UPDATES TO DATABASE ───────────
 async function updateStatus(id, status) {
   try {
-    await fetch(`http://localhost:5000/api/complaints/${id}`, {
+    await fetch(`http://ymca-campus-portal.onrender.com/api/complaints/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status })
@@ -220,7 +220,7 @@ async function saveRemark() {
   if (!remark) { alert('Please enter a remark.'); return; }
 
   try {
-    await fetch(`http://localhost:5000/api/complaints/${_remarkTarget}`, {
+    await fetch(`http://ymca-campus-portal.onrender.com/api/complaints/${_remarkTarget}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ remark })

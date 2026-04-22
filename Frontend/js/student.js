@@ -175,7 +175,7 @@ async function submitComplaint(session, form) {
     });
 
     // 3. Send the request 
-    const response = await fetch('http://localhost:5000/api/complaints', {
+    const response = await fetch('http://ymca-campus-portal.onrender.com/api/complaints', {
       method: 'POST',
       body: formData // Note: No need to set Content-Type; browser does it automatically for FormData
     });
@@ -211,7 +211,7 @@ async function loadMyComplaints(session) {
 
   try {
     // Ask the backend for this specific student's complaints
-    const response = await fetch(`http://localhost:5000/api/complaints/student/${session.enrollment}`);
+    const response = await fetch(`http://ymca-campus-portal.onrender.com/api/complaints/student/${session.enrollment}`);
     const data = await response.json();
 
     if (!data.success || !data.complaints.length) {
