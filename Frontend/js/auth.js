@@ -88,7 +88,7 @@ function initStudentSignup() {
     // ---------------------------------------
 
     try {
-      const response = await fetch('http://ymca-campus-portal.onrender.com/api/auth/register', {
+      const response = await fetch('https://ymca-campus-portal.onrender.com/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -127,7 +127,7 @@ function initStudentLogin() {
     }
 
     try {
-      const response = await fetch('http://ymca-campus-portal.onrender.com/api/auth/login', {
+      const response = await fetch('https://ymca-campus-portal.onrender.com/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ enrollment, password })
@@ -185,7 +185,7 @@ function initHODSignup() {
     // ---------------------------------------
 
     try {
-      const response = await fetch('http://ymca-campus-portal.onrender.com/api/auth/hod/register', {
+      const response = await fetch('https://ymca-campus-portal.onrender.com/api/auth/hod/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ empId, name, email, department: dept, phone, password })
@@ -218,7 +218,7 @@ async function initHODLogin() {
     const password = form.password.value;
 
     try {
-      const response = await fetch('http://ymca-campus-portal.onrender.com/api/auth/hod/login', {
+      const response = await fetch('https://ymca-campus-portal.onrender.com/api/auth/hod/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
