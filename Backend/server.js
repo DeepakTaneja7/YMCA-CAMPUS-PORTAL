@@ -9,12 +9,12 @@ require('./config/db'); // Import the database connection (this will test the co
 // ── MIDDLEWARE ────────────────────────────────────
 app.use(cors({
     origin: [
-        'https://ymca-campus-care-portal.vercel.app', // Your live frontend
+        'https://ymca-campus-care-portal.vercel.app', 
         'http://localhost:5000',                      // Local testing
-        'http://127.0.0.1:5500'                       // Local VS Code Live Server
+        'http://127.0.0.1:5500'                       // For live server testing (if used)
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true // Important if you are using cookies/sessions
+    credentials: true // Allow cookies and authentication headers if needed
 }));
 
 // express.json() tells the server how to read JSON data sent from your frontend forms
@@ -35,6 +35,8 @@ app.use('/api/complaints', complaintRoutes);
 
 // ── START THE SERVER ──────────────────────────────
 const PORT = process.env.PORT || 5000;
+
+
 
 app.listen(PORT, () => {
     console.log(`🚀 Server is officially running on http://localhost:${PORT}`);
