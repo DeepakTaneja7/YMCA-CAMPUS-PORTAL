@@ -7,8 +7,15 @@ const app = express();
 require('./config/db'); // Import the database connection (this will test the connection immediately)
 
 // ── MIDDLEWARE ────────────────────────────────────
-// cors() gives your frontend HTML files permission to talk to this backend
-app.use(cors()); 
+app.use(cors({
+    origin: [
+        'https://ymca-campus-care-portal.vercel.app', // Your live frontend
+        'http://localhost:5000',                      // Local testing
+        'http://127.0.0.1:5500'                       // Local VS Code Live Server
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true // Important if you are using cookies/sessions
+}));
 
 // express.json() tells the server how to read JSON data sent from your frontend forms
 app.use(express.json()); 
