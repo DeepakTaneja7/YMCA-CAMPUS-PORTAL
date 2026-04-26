@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const pool = require('./config/db');
 require('dotenv').config();
 
 // Initialize the Express application
@@ -20,11 +21,23 @@ app.use(cors({
 // express.json() tells the server how to read JSON data sent from your frontend forms
 app.use(express.json()); 
 
+
+
 // ── TEST ROUTE ────────────────────────────────────
-// A simple endpoint to check if the server is alive
-app.get('/', (req, res) => {
-    res.send('Hello from the backend! The server is up and running.');
+// A simple endpoint to keep both Render and Aiven awake
+app.get('/', async (req, res) => {
+    try {
+        // This tiny query forces Aiven to register activity so it doesn't power off
+        await pool.query('SELECT 1'); 
+        
+        res.status(200).send('Hello from the backend! Server and Database are up and running.');
+    } catch (error) {
+        console.error('Keep-alive query failed:', error);
+        res.status(500).send('Server is up, but database is disconnected.');
+    }
 });
+
+
 
 // ── API ROUTES ────────────────────────────────────
 const authRoutes = require('./routes/auth');
