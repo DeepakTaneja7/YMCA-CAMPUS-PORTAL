@@ -37,7 +37,6 @@
 
     <main class="auth-main">
       <div class="auth-card">
-        <!-- Banner -->
         <div class="auth-card-banner">
           <div class="logo-wrap">
             <img
@@ -48,12 +47,12 @@
           </div>
           <h2>Campus Care Portal</h2>
           <div class="portal-label">Student Registration</div>
-          <div class="role-chip role-chip-student">
-            🎓 Create Student Account
+          <div class="role-chip role-chip-student" style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"></path><path d="M6 12v5c3 3 9 3 12 0v-5"></path></svg>
+            Create Student Account
           </div>
         </div>
 
-        <!-- Body -->
         <div class="auth-card-body">
           <a class="back-link" href="student-login.html">← Back to Login</a>
           <h3 class="auth-title">Create Account</h3>
@@ -67,7 +66,9 @@
             <div class="form-group">
               <label class="form-label" for="fullName">Full Name *</label>
               <div class="input-icon-wrap">
-                <span class="icon">👤</span>
+                <span class="icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </span>
                 <input
                   type="text"
                   id="fullName"
@@ -85,7 +86,9 @@
                   >Enrollment No. *</label
                 >
                 <div class="input-icon-wrap">
-                  <span class="icon">🆔</span>
+                  <span class="icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2" ry="2"></rect><circle cx="9" cy="10" r="2"></circle><line x1="15" y1="8" x2="17" y2="8"></line><line x1="15" y1="12" x2="17" y2="12"></line><line x1="7" y1="16" x2="17" y2="16"></line></svg>
+                  </span>
                   <input
                     type="text"
                     id="enrollment"
@@ -130,7 +133,9 @@
             <div class="form-group">
               <label class="form-label" for="email">University Email *</label>
               <div class="input-icon-wrap">
-                <span class="icon">✉️</span>
+                <span class="icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path></svg>
+                </span>
                 <input
                   type="email"
                   id="email"
@@ -147,7 +152,9 @@
             <div class="form-group">
               <label class="form-label" for="phone">Mobile Number</label>
               <div class="input-icon-wrap">
-                <span class="icon">📱</span>
+                <span class="icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                </span>
                 <input
                   type="tel"
                   id="phone"
