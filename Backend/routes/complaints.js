@@ -111,4 +111,57 @@ router.put('/:id', async (req, res) => {
     }
 });
 
+// ── STUDENT: DELETE COMPLAINT ──
+router.delete('/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { enrollment } = req.body; 
+
+        // 1. Check if complaint exists and belongs to this student
+        const [complaint] = await db.execute('SELECT student_enrollment, status FROM complaints WHERE id = ?', [id]);
+        
+        if (complaint.length === 0) return res.status(404).json({ success: false, message: 'Complaint not found.' });
+        if (complaint[0].student_enrollment !== enrollment) return res.status(403).json({ success: false, message: 'Unauthorized.' });
+        
+        // 2. Prevent deleting if HOD is already working on it
+        if (complaint[0].status !== 'Pending') {
+            return res.status(400).json({ success: false, message: 'You can only delete Pending complaints.' });
+        }
+
+        // 3. Delete from DB
+        await db.execute('DELETE FROM complaints WHERE id = ?', [id]);
+        res.status(200).json({ success: true, message: 'Complaint deleted successfully.' });
+    } catch (error) {
+        console.error('❌ Delete error:', error);
+        res.status(500).json({ success: false, message: 'Server error deleting complaint.' });
+    }
+});
+
+// ── STUDENT: UPDATE COMPLAINT DETAILS ──
+
+router.put('/student/update/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { enrollment, title, department, category, priority, building, room, description } = req.body;
+
+        // 1. Verify ownership and status
+        const [complaint] = await db.execute('SELECT student_enrollment, status FROM complaints WHERE id = ?', [id]);
+        
+        if (complaint.length === 0) return res.status(404).json({ success: false, message: 'Complaint not found.' });
+        if (complaint[0].student_enrollment !== enrollment) return res.status(403).json({ success: false, message: 'Unauthorized.' });
+        if (complaint[0].status !== 'Pending') return res.status(400).json({ success: false, message: 'You can only edit Pending complaints.' });
+
+        // 2. Update DB
+        const query = `UPDATE complaints 
+                       SET title=?, department=?, category=?, priority=?, building=?, room_no=?, description=? 
+                       WHERE id=?`;
+        await db.execute(query, [title, department, category, priority, building, room, description, id]);
+
+        res.status(200).json({ success: true, message: 'Complaint updated successfully.' });
+    } catch (error) {
+        console.error('❌ Update error:', error);
+        res.status(500).json({ success: false, message: 'Server error updating complaint.' });
+    }
+});
+
 module.exports = router;
