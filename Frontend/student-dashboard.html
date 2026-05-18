@@ -253,6 +253,60 @@
   </main>
 </div>
 
+<!-- EDIT COMPLAINT MODAL -->
+<div class="modal-overlay" id="editModal" style="display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.6); position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1000;">
+  <div class="card" style="width: 100%; max-width: 600px; padding: 24px; max-height: 90vh; overflow-y: auto; background: white; border-radius: 12px; position: relative;">
+    <button onclick="closeEditModal()" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 1.5rem; cursor: pointer;">✕</button>
+    <h3 style="margin-bottom: 20px;">Edit Complaint</h3>
+    
+    <form id="editComplaintForm">
+      <input type="hidden" id="edit-id" />
+      
+      <div class="form-group">
+        <label class="form-label">Title</label>
+        <input type="text" id="edit-title" class="form-control" required>
+      </div>
+      
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label">Department</label>
+          <select id="edit-dept" class="form-control" required></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select id="edit-category" class="form-control" required></select>
+        </div>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label class="form-label">Priority</label>
+          <select id="edit-priority" class="form-control" required></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Room / Lab No.</label>
+          <input type="text" id="edit-room" class="form-control" required>
+        </div>
+      </div>
+      
+      <div class="form-group">
+         <label class="form-label">Building / Block</label>
+         <input type="text" id="edit-building" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Description</label>
+        <textarea id="edit-desc" class="form-control" rows="3" required></textarea>
+      </div>
+      
+      <div style="display:flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
+        <button type="button" class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="saveEditBtn">Save Changes</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <!-- PHOTO LIGHTBOX MODAL -->
 <div class="modal-overlay" id="photoModal" onclick="if(event.target===this)closePhoto()">
   <div class="modal-box" style="max-width:90vw;background:transparent;box-shadow:none">
