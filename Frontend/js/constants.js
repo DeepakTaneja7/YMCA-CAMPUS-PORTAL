@@ -77,3 +77,12 @@ function timeAgo(iso) {
   if (hrs < 24) return `${hrs}h ago`;
   return `${Math.floor(hrs / 24)}d ago`;
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll('.form-label').forEach(label => {
+    if (label.innerHTML.includes('*')) {
+      // Replaces the * with a red version of the *
+      label.innerHTML = label.innerHTML.replace('*', '<span style="color: #dc2626; font-weight: bold;">*</span>');
+    }
+  });
+});
