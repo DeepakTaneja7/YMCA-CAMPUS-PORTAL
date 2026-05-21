@@ -5,14 +5,14 @@ require('dotenv').config();
 
 // Initialize the Express application
 const app = express();
-require('./config/db'); // Import the database connection 
+require('./config/db'); 
 
 // ── MIDDLEWARE ────────────────────────────────────
 app.use(cors({  
     origin: [
         'https://ymca-campus-care-portal.vercel.app', 
-        'http://localhost:5000',                      // Local testing
-        'http://127.0.0.1:5500'                       // For live server testing (if used)
+        'http://localhost:5000',                      
+        'http://127.0.0.1:5500'                       
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true // Allow cookies and authentication headers if needed
