@@ -16,7 +16,7 @@ cloudinary.config({
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'jcbose_complaints', // Creates a neat folder in your Cloudinary account
+    folder: 'jcbose_complaints', 
     allowed_formats: ['jpg', 'png', 'jpeg', 'webp']
   }
 });

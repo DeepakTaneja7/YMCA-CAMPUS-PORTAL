@@ -1,6 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
-const db = require('../config/db'); // Import your database connection
+const db = require('../config/db'); 
 const router = express.Router();
 
 // --- The Magic Password Rule ---
