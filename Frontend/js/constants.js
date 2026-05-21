@@ -81,7 +81,6 @@ function timeAgo(iso) {
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll('.form-label').forEach(label => {
     if (label.innerHTML.includes('*')) {
-      // Replaces the * with a red version of the *
       label.innerHTML = label.innerHTML.replace('*', '<span style="color: #dc2626; font-weight: bold;">*</span>');
     }
   });
