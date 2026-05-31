@@ -25,17 +25,17 @@ app.use(express.json());
 
 // ── TEST ROUTE ────────────────────────────────────
 // A simple endpoint to keep both Render and Aiven awake
-app.get('/', async (req, res) => {
-    try {
-        // This tiny query forces Aiven to register activity so it doesn't power off
-        await pool.query('SELECT 1'); 
+// app.get('/', async (req, res) => {
+//     try {
+//         // This tiny query forces Aiven to register activity so it doesn't power off
+//         await pool.query('SELECT 1'); 
         
-        res.status(200).send('Hello from the backend! Server and Database are up and running.');
-    } catch (error) {
-        console.error('Keep-alive query failed:', error);
-        res.status(500).send('Server is up, but database is disconnected.');
-    }
-});
+//         res.status(200).send('Hello from the backend! Server and Database are up and running.');
+//     } catch (error) {
+//         console.error('Keep-alive query failed:', error);
+//         res.status(500).send('Server is up, but database is disconnected.');
+//     }
+// });
 
 
 
