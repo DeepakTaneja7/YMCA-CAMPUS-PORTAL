@@ -3,17 +3,17 @@ require('dotenv').config();
 
 // Create a connection pool (better for performance than a single connection)
 const pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
-    port: 12147,
-    ssl: {
-        rejectUnauthorized: false
-    }
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT || 4000,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME || 'test',
+  ssl: {
+    rejectUnauthorized: true
+  },
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 
 // Test the connection right away
