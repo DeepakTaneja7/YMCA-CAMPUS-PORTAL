@@ -40,6 +40,9 @@
     <div class="sidebar-item active" data-section="file">
       <span class="icon">📝</span> File Complaint
     </div>
+    <div class="sidebar-item" data-section="community">
+      <span class="icon">👍</span> Campus Issues
+    </div>
     <div class="sidebar-item" data-section="mycomplaints">
       <span class="icon">📋</span> My Complaints
     </div>
@@ -83,7 +86,7 @@
     <!-- ── SECTION: FILE COMPLAINT ── -->
     <div class="dash-section" id="sec-file">
       <div class="section-title">File a New Complaint</div>
-      <p class="section-sub">Report any maintenance issue on campus with details and photos</p>
+      <p class="section-sub">Report any maintenance issue on campus — check Campus Issues first to upvote existing reports</p>
 
       <div class="complaint-form-card">
         <div class="complaint-form-header">
@@ -129,14 +132,16 @@
                 </select>
               </div>
             </div>
-            <div style="margin-bottom:18px"></div>
+            <p class="sla-helper-note" style="margin-bottom:18px">
+              ⏱️ Target SLA response time: <strong>High</strong> = 4 hrs · <strong>Medium</strong> = 24 hrs · <strong>Low</strong> = 48 hrs
+            </p>
 
             <!-- Block / Room -->
             <div class="form-row-2">
               <div class="form-group" style="margin-bottom:0">
                 <label class="form-label" for="block">Block / Floor</label>
                 <input type="text" id="block" name="block" class="form-control"
-                  placeholder="e.g. CE Block,1st Floor" />
+                  placeholder="e.g. CE Block, 1st Floor" />
               </div>
               <div class="form-group" style="margin-bottom:0">
                 <label class="form-label" for="room">Room / Lab Number *</label>
@@ -182,10 +187,43 @@
       </div>
     </div>
 
+    <!-- ── SECTION: CAMPUS ISSUES (COMMUNITY UPVOTING) ── -->
+    <div class="dash-section" id="sec-community" style="display:none">
+      <div class="section-title">Campus Issues Feed</div>
+      <p class="section-sub">Facing the same issue? Upvote it instead of filing a duplicate — higher upvotes prioritize HOD action.</p>
+
+      <div class="filters-bar">
+        <input type="text" id="communitySearch" class="form-control search-input"
+          placeholder="🔍 Search issues, rooms, blocks…" />
+        <select id="communityDeptFilter" class="form-control">
+          <option value="All">All Departments</option>
+        </select>
+        <select id="communityStatusFilter" class="form-control">
+          <option value="Open">Open Only</option>
+          <option value="All">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Resolved">Resolved</option>
+        </select>
+        <select id="communitySort" class="form-control">
+          <option value="upvotes">Sort: Most Upvoted</option>
+          <option value="overdue">Sort: Overdue First</option>
+          <option value="newest">Sort: Newest First</option>
+        </select>
+      </div>
+
+      <div class="complaints-list" id="communityComplaintsList">
+        <div class="empty-state">
+          <div class="icon">👍</div>
+          <p>Loading campus issues…</p>
+        </div>
+      </div>
+    </div>
+
     <!-- ── SECTION: MY COMPLAINTS ── -->
     <div class="dash-section" id="sec-mycomplaints" style="display:none">
       <div class="section-title">My Complaints</div>
-      <p class="section-sub">Track status of all complaints filed by you</p>
+      <p class="section-sub">Track status, community upvotes, and SLA deadlines for all complaints filed by you</p>
 
       <div class="complaints-list" id="myComplaintsList">
         <div class="empty-state">
@@ -202,19 +240,16 @@
 
       <div class="card" style="padding:28px;max-width:640px">
         <ol style="padding-left:20px;line-height:2;color:var(--gray-600)">
-          <li><strong>Click on "File Complaint"</strong> in the sidebar.</li>
-          <li>Enter a clear <strong>title</strong> describing the problem.</li>
-          <li>Select the <strong>Department</strong> responsible for the area.</li>
-          <li>Choose the <strong>issue category</strong> (e.g., Electrical, Plumbing).</li>
-          <li>Set the <strong>priority</strong> — High for urgent issues.</li>
-          <li>Enter the <strong>Block and Room number</strong> precisely.</li>
-          <li>Write a <strong>clear description</strong> of the problem.</li>
-          <li><strong>Upload photos</strong> of the issue (upto 5 images).</li>
-          <li>Click <strong>"Submit Complaint"</strong> — done! 🎉</li>
+          <li>Check <strong>"Campus Issues"</strong> first — if someone already reported the problem, click <strong>"👍 Me Too"</strong> to boost its priority.</li>
+          <li>If it's a new issue, click <strong>"File Complaint"</strong> in the sidebar.</li>
+          <li>Enter a clear <strong>title</strong>, <strong>Department</strong>, <strong>Category</strong>, and <strong>Priority</strong>.</li>
+          <li>Enter the exact <strong>Block and Room number</strong> and a detailed description.</li>
+          <li>Upload up to <strong>5 photos</strong> as proof and click <strong>"Submit Complaint"</strong>.</li>
+          <li>Every ticket gets an automatic <strong>SLA deadline</strong> (High: 4h, Medium: 24h, Low: 48h). Unresolved tickets past the deadline are escalated automatically.</li>
         </ol>
 
         <div class="alert alert-info" style="margin-top:20px">
-          📌 Your complaint will be visible to the HOD of the selected department. You can track the status under <strong>"My Complaints"</strong>.
+          📌 Your complaint is visible to the HOD of the selected department and to fellow students in the Campus Issues feed.
         </div>
       </div>
     </div>
@@ -258,15 +293,15 @@
   <div class="card" style="width: 100%; max-width: 600px; padding: 24px; max-height: 90vh; overflow-y: auto; background: white; border-radius: 12px; position: relative;">
     <button onclick="closeEditModal()" style="position: absolute; top: 16px; right: 16px; background: none; border: none; font-size: 1.5rem; cursor: pointer;">✕</button>
     <h3 style="margin-bottom: 20px;">Edit Complaint</h3>
-    
+
     <form id="editComplaintForm">
       <input type="hidden" id="edit-id" />
-      
+
       <div class="form-group">
         <label class="form-label">Title</label>
         <input type="text" id="edit-title" class="form-control" required>
       </div>
-      
+
       <div class="form-row-2">
         <div class="form-group">
           <label class="form-label">Department</label>
@@ -288,17 +323,17 @@
           <input type="text" id="edit-room" class="form-control" required>
         </div>
       </div>
-      
+
       <div class="form-group">
-         <label class="form-label">Building / Block</label>
-         <input type="text" id="edit-building" class="form-control">
+        <label class="form-label">Building / Block</label>
+        <input type="text" id="edit-building" class="form-control">
       </div>
 
       <div class="form-group">
         <label class="form-label">Description</label>
         <textarea id="edit-desc" class="form-control" rows="3" required></textarea>
       </div>
-      
+
       <div style="display:flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
         <button type="button" class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
         <button type="submit" class="btn btn-primary" id="saveEditBtn">Save Changes</button>
@@ -308,15 +343,17 @@
 </div>
 
 <!-- PHOTO LIGHTBOX MODAL -->
-<div class="modal-overlay" id="photoModal" onclick="if(event.target===this)closePhoto()">
-  <div class="modal-box" style="max-width:90vw;background:transparent;box-shadow:none">
-    <img id="modalPhoto" src="" alt="Complaint Photo" style="max-width:100%;max-height:85vh;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,0.5)">
-    <button onclick="closePhoto()" style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.6);color:white;border:none;border-radius:50%;width:36px;height:36px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
+<div class="modal-overlay" id="photoModal" onclick="if(event.target===this)closePhoto()" style="background:rgba(0,0,0,0.85)">
+  <div style="position:relative;max-width:90vw">
+    <img id="modalPhoto" src="" alt="Complaint Photo"
+      style="max-width:100%;max-height:85vh;border-radius:12px;box-shadow:0 8px 40px rgba(0,0,0,0.5);display:block">
+    <button onclick="closePhoto()"
+      style="position:absolute;top:-14px;right:-14px;background:var(--red);color:white;border:none;border-radius:50%;width:36px;height:36px;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center">✕</button>
   </div>
 </div>
 
 <footer class="footer" style="margin-top:0">
-<strong>J.C. Bose University of Science & Technology, YMCA Faridabad</strong> · Campus Care Portal
+  <strong>J.C. Bose University of Science & Technology, YMCA Faridabad</strong> · Campus Care Portal
 </footer>
 
 <script src="js/constants.js"></script>

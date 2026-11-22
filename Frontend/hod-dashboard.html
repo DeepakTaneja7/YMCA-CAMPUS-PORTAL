@@ -45,6 +45,10 @@
     <div class="sidebar-item active" data-section="all">
       <span class="icon">📋</span> All Complaints
     </div>
+    <div class="sidebar-item" data-section="overdue">
+      <span class="icon">🚨</span> Overdue Escalated
+      <span class="sidebar-badge" id="sidebarOverdueBadge" style="display:none">0</span>
+    </div>
     <div class="sidebar-item" data-section="pending">
       <span class="icon">⏳</span> Pending
     </div>
@@ -71,6 +75,11 @@
         <div class="stat-value" id="statTotal">0</div>
         <div class="stat-label">Total Received</div>
       </div>
+      <div class="stat-card stat-card-alert">
+        <div class="stat-icon stat-icon-red">🚨</div>
+        <div class="stat-value" id="statOverdue">0</div>
+        <div class="stat-label">Overdue SLA</div>
+      </div>
       <div class="stat-card">
         <div class="stat-icon stat-icon-yellow">⏳</div>
         <div class="stat-value" id="statPending">0</div>
@@ -91,7 +100,7 @@
     <!-- ── SECTION: ALL COMPLAINTS ── -->
     <div class="dash-section" id="sec-all">
       <div class="section-title">Department Complaints</div>
-      <p class="section-sub">All complaints raised for your department</p>
+      <p class="section-sub">Prioritized by SLA escalation, urgency, and student upvotes</p>
 
       <!-- Filters -->
       <div class="filters-bar">
@@ -99,16 +108,22 @@
           placeholder="🔍 Search by title, student, room…" />
         <select id="filterStatus" class="form-control">
           <option value="All">All Status</option>
-          <option>Pending</option>
-          <option>In Progress</option>
-          <option>Resolved</option>
-          <option>Rejected</option>
+          <option value="Overdue">🚨 Overdue Only</option>
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Resolved">Resolved</option>
+          <option value="Rejected">Rejected</option>
         </select>
         <select id="filterPriority" class="form-control">
           <option value="All">All Priority</option>
-          <option>High</option>
-          <option>Medium</option>
-          <option>Low</option>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+        <select id="sortOrder" class="form-control">
+          <option value="smart">Sort: Escalation Priority</option>
+          <option value="upvotes">Sort: Most Upvoted</option>
+          <option value="newest">Sort: Newest First</option>
         </select>
       </div>
 
@@ -117,6 +132,15 @@
           <div class="icon">📭</div>
           <p>Loading complaints…</p>
         </div>
+      </div>
+    </div>
+
+    <!-- ── SECTION: OVERDUE ESCALATED ── -->
+    <div class="dash-section" id="sec-overdue" style="display:none">
+      <div class="section-title">Overdue & Escalated Complaints</div>
+      <p class="section-sub">Open complaints that have breached their SLA resolution deadline</p>
+      <div class="complaints-list" id="overdueContainer">
+        <div class="empty-state"><div class="icon">✅</div><p>No overdue complaints right now.</p></div>
       </div>
     </div>
 
@@ -150,27 +174,20 @@
     <!-- ── SECTION: HOD GUIDE ── -->
     <div class="dash-section" id="sec-guide" style="display:none">
       <div class="section-title">HOD Guide</div>
-      <p class="section-sub">How to manage complaints on this portal</p>
+      <p class="section-sub">How to manage complaints, upvotes, and SLA deadlines</p>
 
       <div class="card" style="padding:28px;max-width:640px">
         <h4 style="font-family:var(--font-heading);color:var(--navy);margin-bottom:14px">Managing Complaints</h4>
         <ol style="padding-left:20px;line-height:2.2;color:var(--gray-600)">
-          <li>You only see complaints filed for <strong>your department</strong>.</li>
-          <li>Review each complaint — read description and check photos.</li>
-          <li>Use the <strong>"Update Status"</strong> dropdown to change status:
-            <ul style="margin-left:16px;list-style:disc">
-              <li><strong>Pending</strong> – Not yet acted upon</li>
-              <li><strong>In Progress</strong> – Work has been initiated</li>
-              <li><strong>Resolved</strong> – Issue has been fixed</li>
-              <li><strong>Rejected</strong> – Complaint is invalid</li>
-            </ul>
-          </li>
-          <li>Click <strong>"Add Remark"</strong> to provide a response or resolution note to the student.</li>
-          <li>Use filters to quickly find complaints by status or priority.</li>
+          <li>You see all complaints assigned to <strong>your department</strong>.</li>
+          <li><strong>SLA Deadlines:</strong> High priority = <strong>4 hours</strong>, Medium = <strong>24 hours</strong>, Low = <strong>48 hours</strong>. Unresolved tickets past their deadline appear highlighted in red under <strong>Overdue Escalated</strong>.</li>
+          <li><strong>Student Upvotes:</strong> Tickets with more 👍 upvotes affect multiple students — sort by <strong>Most Upvoted</strong> or <strong>Escalation Priority</strong> to address high-impact problems first.</li>
+          <li>Use the <strong>"Update Status"</strong> dropdown to mark issues as Pending, In Progress, Resolved, or Rejected.</li>
+          <li>Click <strong>"Add Remark"</strong> to send a live status update visible to students.</li>
         </ol>
 
         <div class="alert alert-info" style="margin-top:20px">
-          ℹ️ Students can see the status and your remarks in real time from their dashboard.
+          ℹ️ Marking a complaint as <strong>Resolved</strong> automatically clears its overdue flag and records the resolution timestamp.
         </div>
       </div>
     </div>
@@ -214,7 +231,7 @@
 </div>
 
 <footer class="footer" style="margin-top:0">
-<strong>J.C. Bose University of Science & Technology, YMCA Faridabad</strong> · Campus Care Portal
+  <strong>J.C. Bose University of Science & Technology, YMCA Faridabad</strong> · Campus Care Portal
 </footer>
 
 <script src="js/constants.js"></script>
